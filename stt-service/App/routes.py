@@ -5,6 +5,7 @@ import whisper
 import soundfile as sf
 import io
 from loguru import logger
+import librosa
 
 router = APIRouter()
 
@@ -17,14 +18,22 @@ async def transcribe_audio(file: UploadFile = File(...)) -> TranscriptionRespons
         #convert bytes data to numpy array
         with io.BytesIO(audio_data) as audio_buffer:
             audio, sample_rate = sf.read(audio_buffer, dtype='float32')
-            logger.info("Audio file converted to NumPy array.")
+            logger.info(f"Audio file converted to NumPy array. Sample rate: {sample_rate}, Shape: {audio.shape}") #sample rate should be 16kHz
             
-        #process audio with whisper model
+        if sample_rate != 16000:
+            audio = librosa.resample(audio, orig_sr=sample_rate, target_sr=16000)
+            logger.info(f"Resampled audio to 16kHz. Shape: {audio.shape}")
+
+        #process audio with whisper
         result = whisper.transcribe(model, audio)
-        logger.info("Transcription completed successfuly.")
+        logger.info(f"Transcription completed successfully. Result: {result['text']}")
+
+        #double check to see if result is empty (sound volume/ quality)
+        if not result['text']:
+            logger.warning("The transcription result is empty...")
         
         return TranscriptionResponse(text=result["text"])          
     
     except Exception as e:
-        logger.error(f"An error ocurred during transcription: {e}")
+        logger.error(f"An error occurred during transcription: {e}")
         raise HTTPException(status_code=500, detail="Error occurred during transcription")
