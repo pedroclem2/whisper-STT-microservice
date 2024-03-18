@@ -1,18 +1,12 @@
 FROM python:3.8.18
 
-#set working directory in the container
 WORKDIR /app
 
-#copy the current directory contents into the container at /app
 COPY . /app
 
-#install requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt streamlit
 
 EXPOSE 8000
+EXPOSE 8501
 
-#environment variable
-ENV NAME World
-
-#run app when the container launches
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 & streamlit run ui/streamlit_app.py --server.port 8501 --server.address 0.0.0.0"
