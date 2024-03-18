@@ -47,6 +47,7 @@ Ensure you have the following installed:
 - Open the Streamlit UI at `http://localhost:8501` to upload audio files or record audio directly in the browser for transcription.
 
 
-Ciao
+
+*Ciao* 👋
 
 
