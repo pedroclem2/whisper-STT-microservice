@@ -1,5 +1,7 @@
 FROM python:3.8.18
 
+RUN apt-get update && apt-get install -y ffmpeg libsndfile1
+
 WORKDIR /app
 
 COPY . /app
