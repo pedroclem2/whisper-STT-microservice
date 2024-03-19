@@ -27,7 +27,7 @@ if audio_bytes is not None or uploaded_file is not None:
     
     if audio_data is not None:
         files = {'file': ('audio.wav', audio_data.getvalue(), 'audio/wav')}
-        stt_service_url = 'http://localhost:8000/transcribe'
+        stt_service_url = "http://127.0.0.1:8000/transcribe"
     
         response = requests.post(stt_service_url, files=files)
     
